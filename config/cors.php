@@ -1,5 +1,4 @@
 <?php
-// config/cors.php
 
 return [
     'paths' => ['api/*'],
@@ -15,7 +14,7 @@ return [
 
     'exposed_headers' => [],
 
-    'max_age' => 3600,
+    'max_age' => 3600, // 1 hour
 
     'supports_credentials' => false,
 ];
