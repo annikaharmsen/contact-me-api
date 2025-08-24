@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ContactController extends Controller
 {
-    public function submit(Request $request)
+    public function sendMail(Request $request)
     {
         \Log::info('ContactController::submit called', [
             'method' => $request->method(),

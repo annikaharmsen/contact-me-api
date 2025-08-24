@@ -3,4 +3,4 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContactController;
 
-Route::post('/', [ContactController::class, 'submit']);
+Route::post('/', [ContactController::class, 'sendMail']);
