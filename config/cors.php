@@ -3,7 +3,7 @@
 return [
     'paths' => ['api', 'api/*'],
 
-    'allowed_methods' => ['POST'],
+    'allowed_methods' => ['POST', 'GET'],
 
     'allowed_origins' => [
         'https://' . env('REQUEST_DOMAIN'),     // Production frontend
