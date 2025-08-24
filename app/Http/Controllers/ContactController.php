@@ -43,11 +43,18 @@ class ContactController extends Controller
                 return response()->json(['error' => 'Server configuration error'], 500);
             }
 
-            // Temporarily disable email sending to test timeout issue
-            \Log::info('Email would be sent to: ' . $contactEmail . ' with data: ' . json_encode($data));
+            // Set a timeout for mail operations
+            ini_set('max_execution_time', 30);
+            
+            Mail::raw($data['message'], function ($message) use ($data, $contactEmail) {
+                $message->to($contactEmail)
+                        ->subject($data['name'] . ': ' . ($data['subject'] ?? 'Contact Form'))
+                        ->cc($data['email'])
+                        ->replyTo($data['email'], $data['name']);
+            });
 
             return response()->json([
-                'message' => 'Email sent successfully (debug mode)'
+                'message' => 'Email sent successfully'
             ], 200);
 
         } catch (\Exception $e) {
