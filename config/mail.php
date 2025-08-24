@@ -117,4 +117,6 @@ return [
 
     'contact_email' => env('CONTACT_EMAIL'),
 
+    'request_domain' => env('REQUEST_DOMAIN'),
+
 ];
