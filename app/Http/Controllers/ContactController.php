@@ -35,8 +35,13 @@ class ContactController extends Controller
         $data = $validator->validated();
 
         try {
-            $contactEmail = env('CONTACT_EMAIL');
-            \Log::info('Contact email: ' . $contactEmail);
+            $contactEmail = config('mail.contact_email');
+            \Log::info('Contact email: ' . ($contactEmail ?: 'NULL'));
+            
+            if (!$contactEmail) {
+                \Log::error('CONTACT_EMAIL not configured');
+                return response()->json(['error' => 'Server configuration error'], 500);
+            }
 
             Mail::raw($data['message'], function ($message) use ($data, $contactEmail) {
                 $message->to($contactEmail)
