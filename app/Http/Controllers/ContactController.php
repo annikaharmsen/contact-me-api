@@ -27,8 +27,11 @@ class ContactController extends Controller
         $data = $validator->validated();
 
         try {
-            Mail::raw($data['message'], function ($message) use ($data) {
-                $message->to(env('CONTACT_EMAIL'))
+            $contactEmail = env('CONTACT_EMAIL');
+            \Log::info('Contact email: ' . $contactEmail);
+
+            Mail::raw($data['message'], function ($message) use ($data, $contactEmail) {
+                $message->to($contactEmail)
                         ->subject($data['name'] . ': ' . ($data['subject'] ?? 'Contact Form'))
                         ->cc($data['email'])
                         ->replyTo($data['email'], $data['name']);
