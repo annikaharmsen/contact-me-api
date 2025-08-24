@@ -10,6 +10,14 @@ class ContactController extends Controller
 {
     public function submit(Request $request)
     {
+        \Log::info('ContactController::submit called', [
+            'method' => $request->method(),
+            'url' => $request->fullUrl(),
+            'headers' => $request->headers->all(),
+            'ip' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
