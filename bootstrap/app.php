@@ -13,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->prepend(HandleCors::class);
         $middleware->api(prepend: [
             HandleCors::class,
         ]);
