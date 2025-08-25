@@ -6,6 +6,6 @@
 <body>
     <h1>{{ $data['subject'] ?? 'Contact Form' }}</h1>
     <p>{{ $data['message'] }}</p>
-    <p>Form accessed from {{ config('mail.request_domain') }}</p>
+    <p>Form accessed from {{ config('app.request_domain') }}</p>
 </body>
 </html>
