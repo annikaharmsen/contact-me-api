@@ -54,7 +54,7 @@ return [
 
         'stack' => [
             'driver' => 'stack',
-            'channels' => explode(',', (string) env('LOG_STACK', 'single')),
+            'channels' => explode(',', (string) env('LOG_STACK', 'single,mail')),
             'ignore_exceptions' => false,
         ],
 
@@ -116,6 +116,16 @@ return [
             'driver' => 'errorlog',
             'level' => env('LOG_LEVEL', 'debug'),
             'replace_placeholders' => true,
+        ],
+
+        'mail' => [
+            'driver' => 'mail',
+            'to' => [
+                'address' => env('LOG_MAIL_TO', config('mail.contact.address')),
+                'name' => env('LOG_MAIL_NAME', config('mail.contact.name', 'Log Alerts')),
+            ],
+            'subject' => env('LOG_MAIL_SUBJECT', 'Application Error'),
+            'level' => env('LOG_MAIL_LEVEL', 'error'),
         ],
 
         'null' => [
