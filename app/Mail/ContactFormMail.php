@@ -14,22 +14,51 @@ class ContactFormMail extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private $customer, $form_subject;
+
     /**
      * Create a new message instance.
      */
     public function __construct( public $data )
-    {}
+    {
+        $this->customer = [
+            'name' => $data['name'],
+            'address' => $data['email']
+        ];
+        $this->form_subject = $data['subject'] ?? null;
+    }
 
     /**
      * Get the message envelope.
+     *
+     * from:    mail_from_address@example.com, Customer Name (Contact Form)
+     * to:      contact_address@example.com, Contact Name
+     * replyTo: customer@example.com, Customer Name
+     * subject: Form Subject
      */
     public function envelope(): Envelope
     {
+        $mailer = config('mail.from');
+        $contact = config('mail.contact');
+
         return new Envelope(
-            from: new Address(config('mail.from.address'), config('mail.from.name')),
-            cc: $this->data['email'],
-            replyTo: [new Address($this->data['email'], $this->data['name'])],
-            subject: $this->data['name'] . ': ' . $this->data['subject'] ?? 'Contact Form'
+            from: new Address(
+                $mailer['address'],
+                 $this->customer['name'] . ' (Contact Form)'
+            ),
+            to: [
+                new Address(
+                    $contact['address'],
+                    $contact['name']
+                )
+            ],
+            replyTo: [
+                new Address(
+                    $this->customer['address'],
+                    $this->customer['name']
+                    )
+                ],
+            subject: $this->form_subject ?? 'Contact Form',
         );
     }
 
@@ -39,7 +68,7 @@ class ContactFormMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'contact-form-mail',
+            view: 'mail.contact-form-mail',
         );
     }
 
