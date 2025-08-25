@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\ConfirmationMail;
 use App\Mail\ContactFormMail;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -29,26 +31,30 @@ class ContactController extends Controller
         $data = $validator->validated();
 
         try {
-            $contactEmail = config('mail.contact_email');
 
-            if (!$contactEmail) {
-                \Log::error('CONTACT_EMAIL not configured');
-                return response()->json(['error' => 'Server configuration error'], 500);
-            }
+            Mail::send(new ContactFormMail($data));
 
-            ini_set('max_execution_time', 30);
-
-            Mail::to($contactEmail)->send(new ContactFormMail($data));
-
-            return response()->json([
-                'message' => 'Email sent successfully'
-            ], 200);
-
-        } catch (\Exception $e) {
-            \Log::error('Exception in contact controller: ' . $e->getMessage());
+        } catch (Exception $error) {
+            \Log::error(
+                'ContactController failed to send ContactFormMail: ' . $error->getMessage()
+            );
             return response()->json([
                 'error' => 'Failed to send email'
             ], 500);
         }
+
+        try {
+
+            Mail::send(new ConfirmationMail($data));
+
+        } catch (Exception $error) {
+            \Log::error(
+                'ContactController failed to send ConfirmationMail: ' . $error->getMessage()
+            );
+        }
+
+        return response()->json([
+            'message' => 'Email sent successfully'
+        ], 200);
     }
 }
