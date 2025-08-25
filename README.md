@@ -5,9 +5,12 @@ A Laravel-based REST API that processes contact form submissions and sends email
 ## Features
 
 -   Simple REST API endpoint for contact form submissions
+-   Dual email system: sends to recipient and confirmation to sender
 -   Automatic email forwarding with custom formatting
--   CC functionality to include the sender in email communications
 -   Built-in security with Laravel's validation system
+-   CORS configuration for cross-origin requests
+-   Error logging to both file and email
+-   Debug endpoints for development testing
 
 ## API Endpoint
 
@@ -72,7 +75,8 @@ Processes contact form submissions and sends formatted emails.
     Edit `.env` file:
 
     ```env
-    CONTACT_EMAIL="your-email@example.com"
+    CONTACT_ADDRESS="your-email@example.com"
+    CONTACT_NAME="Your Name"
     REQUEST_DOMAIN="yourfrontenddomain.com"
 
     # For production, configure your mail driver:
@@ -93,15 +97,23 @@ Processes contact form submissions and sends formatted emails.
 
     The API will be available at `http://localhost:8000/api/`
 
-## Email Format
+## Email System
 
-When a contact form is submitted, the API sends an email with:
+When a contact form is submitted, the API sends **two emails**:
 
--   **To:** Your configured contact email
--   **CC:** The sender's email address
--   **Subject:** `{Name}: {Subject}` (e.g., "John Doe: Inquiry about services")
--   **Reply-To:** Sender's email for easy replies
--   **Body:** The message content as provided
+### 1. Contact Form Email (to you)
+-   **To:** Your configured contact email (`CONTACT_ADDRESS`)
+-   **From:** Your mail system (`MAIL_FROM_ADDRESS`) with sender's name
+-   **Reply-To:** Sender's email for easy replies  
+-   **Subject:** Form subject or "Contact Form"
+-   **Body:** The message content with sender details
+
+### 2. Confirmation Email (to sender)
+-   **To:** Sender's email address
+-   **From:** Your mail system (`MAIL_FROM_ADDRESS`)
+-   **Reply-To:** Your contact email (`CONTACT_ADDRESS`)
+-   **Subject:** "Confirmation: your message to [Your Name] has been sent"
+-   **Body:** Thank you message confirming receipt
 
 ## Validation Rules
 
@@ -158,10 +170,12 @@ This API is built using Laravel 12 and follows a clean, modular architecture:
 
 **4. Email Integration**
 
+-   Dual mailable system: `ContactFormMail` and `ConfirmationMail` classes
 -   Uses Laravel's Mail facade for email functionality
 -   Leverages Laravel's built-in mail drivers (SMTP, log, etc.)
--   Implements proper email formatting with CC and Reply-To headers
+-   Implements proper email formatting with Reply-To headers
 -   Supports configurable recipient via environment variables
+-   Error logging to both file and email for monitoring
 
 ### Request Flow
 
@@ -173,9 +187,9 @@ This API is built using Laravel 12 and follows a clean, modular architecture:
 
 ### Key Design Decisions
 
-**Email Formatting**: The subject line uses the format `Name: Subject` to make it immediately clear who sent the message and what it's about. If no subject is provided, it defaults to "Contact Form".
+**Dual Email System**: The API sends two separate emails - one to you with the contact form details and one confirmation email to the sender. This provides a better user experience and creates a communication trail.
 
-**CC Implementation**: The sender is CC'd on the email to create a paper trail and allow them to reference their original message.
+**Email Formatting**: Clean, professional email templates with proper from/reply-to headers to ensure easy communication flow.
 
 **Validation Strategy**: Server-side validation ensures data integrity and provides detailed error messages for frontend handling.
 
