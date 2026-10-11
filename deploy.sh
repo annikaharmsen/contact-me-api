@@ -8,4 +8,4 @@ npm ci
 npm run build
 php artisan migrate --force
 
-( flock -w 10 9 || exit 1; sudo -S service php8.3-fpm reload ) 9>/tmp/fpmlock
+sudo -n service php8.3-fpm reload

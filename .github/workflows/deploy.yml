@@ -6,6 +6,8 @@ on:
       - main
   workflow_dispatch:
 
+permissions: {}
+
 concurrency:
   group: deploy
   cancel-in-progress: false
@@ -13,6 +15,7 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Deploy over SSH
         env:
